@@ -429,24 +429,23 @@ export default function InteractiveBusinessPage() {
         <div className="mb-1">
           {/* <img src="/placeholder.svg?height=200&width=800" alt="Business Banner" className="w-full h-50 object-cover rounded-lg shadow-md" /> */}
           <img 
-            src="/Banner-Image.jpg" 
+            src="/Banner Image-Contoso.jpg" 
             alt="Business Banner" 
             className="w-full h-full object-contain rounded-lg shadow-md" 
           />
         </div>
 
-        {/* <div className="prose max-w-none">
+        <div className="prose max-w-none">
           <div>
-              <h2 className="text-4xl font-bold mb-4" style={{ color: '#8A0000' }}>Seamless Connections</h2>
-              <p className="text-lg mb-6">Every day at Changi Airport, one of the world’s busiest and best cargo hubs, SATS is there.</p>
+              <h2 className="text-4xl font-bold mb-4" style={{ color: '#4074AE' }}>Seamless Connections</h2>
+              <p className="text-lg mb-6">Every day at Changi Airport, one of the world’s busiest and best cargo hubs, Contoso is there.</p>
               <p className="text-lg mb-6">Seamlessly connecting millions of tonnes of cargo from Singapore to the world.</p>
-              <p className="text-lg mb-6">Our experienced and highly trained teams use cutting-edge technology and leading automation systems, powered by six airfreight terminals including an Express Courier Centre.</p>
             </div>
 
         <div >
         <h2 className="text-2xl font-semibold mb-4">Our Services</h2>
-            <h3 className="text-xl font-semibold mb-3">WFS (Worldwide Flight Services)</h3>
-            <p className="text-lg mb-6">WFS is now a member of the SATS Group. WFS works closely with airlines, airports, freight forwarders and businesses, and our experienced, passionate and proactive team constantly seek the safest, most efficient way to deliver best-in-class solutions.</p>
+            <h3 className="text-xl font-semibold mb-3">WDS (Worldwide Delivery Services)</h3>
+            <p className="text-lg mb-6">WDS is now a member of the Contoso Group. WFS works closely with airlines, airports, freight forwarders and businesses, and our experienced, passionate and proactive team constantly seek the safest, most efficient way to deliver best-in-class solutions.</p>
         </div>
       </div>
 
@@ -455,7 +454,7 @@ export default function InteractiveBusinessPage() {
             <li>Warehouse</li>
             <li>Consignments</li>
           </ul>
-        </div>*/}
+        </div>
       </div> 
       
       <div 
@@ -465,7 +464,7 @@ export default function InteractiveBusinessPage() {
 
                 {isChatOpen ? (
           <X  
-            className="w-8 h-8 text-red-800 absolute bottom-100 left-5 z-10 shadow-md" 
+            className="w-8 h-8 text-blue-800 absolute bottom-100 left-5 z-10 shadow-md" 
             onClick={() => setIsChatOpen(!isChatOpen)} 
           />
         ) : (
@@ -490,7 +489,7 @@ export default function InteractiveBusinessPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-5" ref={chatContainerRef}>
-              <div className="flex flex-col w-3/5 mx-auto items-center mb-8 border border-red-800 shadow-lg p-4 rounded-lg" style={{ boxShadow: '0 3px 5px rgba(139, 0, 0, 0.5)' }}>
+              <div className="flex flex-col w-3/5 mx-auto items-center mb-8 border border-blue-800 shadow-lg p-4 rounded-lg" style={{ boxShadow: '0 3px 5px rgba(64, 116, 174, 0.5)' }}>
                 <img 
                   src="/Cartoon_avatar_logo.png" 
                   alt="CargoMate Logo" 
@@ -515,7 +514,7 @@ export default function InteractiveBusinessPage() {
                     className={`max-w-[100%] p-3 rounded-lg ${
                       msg.isBot 
                         ? 'bg-gray-100' 
-                        : 'bg-[#8A0000] text-white'
+                        : 'bg-[#4074AE] text-white'
                     }`}
                   >
                   {msg.isBot ? (
@@ -551,7 +550,7 @@ export default function InteractiveBusinessPage() {
                 <>
                   <button
                     onClick={toggleAudioTransmission}
-                    className="p-2 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-red-500 text-white focus:ring-red-500"
+                    className="p-2 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-lightblue-500 text-white focus:ring-red-500"
                     aria-label="Resume Audio"
                   >
                     <MicOff className="h-6 w-6" />
@@ -563,7 +562,7 @@ export default function InteractiveBusinessPage() {
                 <Button 
                   onClick={handleVoiceCall} 
                   className="mt-4"
-                  style={{ backgroundColor: '#8A0000', color: 'white' }}
+                  style={{ backgroundColor: '#4074AE', color: 'white' }}
                 >
                   End Call
                 </Button>
@@ -579,7 +578,7 @@ export default function InteractiveBusinessPage() {
                   onKeyPress={(e) => e.key === 'Enter' && (isEmailRequested ? handleEmailSubmit() : handleSendMessage())}
                 />
                 <Button onClick={isEmailRequested ? handleEmailSubmit : handleSendMessage} 
-                className="mr-2" style={{ backgroundColor: '#8A0000', color: 'white' }} >
+                className="mr-2" style={{ backgroundColor: '#4074AE', color: 'white' }} >
                   Send
                 </Button>
                 <Button variant="outline" size="icon" onClick={handleVoiceCall}>
