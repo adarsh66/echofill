@@ -26,6 +26,8 @@ gpt4o_key = os.getenv("gpt-4o_api_key")
 
 email_conn_str = os.getenv("email_conn_str")
 sender_email = os.getenv("email_sender")
+print(sender_email)
+print(email_conn_str)
 email_client = EmailClient.from_connection_string(email_conn_str)
 
 SystemPrompt = "You are a customer service agent for Contoso, assisting consignees in filling out the necessary forms to collect their delivery.\
@@ -118,7 +120,9 @@ def send_email(doc_filename, recipient_email):
         result = poller.result()
         return result
     except Exception as ex:
+        print(ex)
         print('Exception: Message not sent')
+        
         return "Message not sent"
 
 

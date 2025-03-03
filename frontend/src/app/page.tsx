@@ -1,12 +1,5 @@
 'use client'
-/* eslint-disable @typescript-eslint/no-empty-interface */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 import { useState, useEffect, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,26 +16,14 @@ import ReactMarkdown from 'react-markdown'
 //   return { success: true }
 // }
 
-// let sessionInstructions = `You are a customer service agent for SATS, assisting consignees in filling out the necessary forms to collect their delivery.
-// Provide a guidance to help the consignee understand the procedure for collecting their delivery. Extract the following details during the conversation:
-// ## Pause as and when it is required to allow the consignee to provide the necessary information. You can be friendly with your tone. 
-// ## Make sure to Summarise the user information before you end the call - do this action alone slowly and precisely.
-//   Name:
-//   Shipment Tracking No: 
-//   Collection Date:
-//   Identification Details: <usually passport or NRIC>
-//   Special Instructions:
-// ## Make sure to inform the user that you will generate the form and send it to their email address. They should check their email for the form and sign it when they come for collection.
-// `;
-
 console.log('All environment variables:', process.env);
 
-const WebSocketURL = process.env.NEXT_PUBLIC_GPT4Q_REALTIME_WEBSOCKET_URL || 'wss://api.alloy.ai/realtime';
-const backendAOAIURL = process.env.NEXT_PUBLIC_APP_AOAI_URL || 'http://localhost:5000/get_chat_response';
-const backendMailURL = process.env.NEXT_PUBLIC_APP_MAIL_URL || 'http://localhost:5000/form_send_email';
+const WebSocketURL = process.env.NEXT_PUBLIC_GPT4Q_REALTIME_WEBSOCKET_URL;
+const backendAOAIURL = process.env.NEXT_PUBLIC_APP_AOAI_URL;
+const backendMailURL = process.env.NEXT_PUBLIC_APP_MAIL_URL;
 console.log('WebSocketURL:', WebSocketURL);
 console.log('backendAOAIURL:', backendAOAIURL);
-// console.log('backendMailURL:', backendMailURL);
+console.log('backendMailURL:', backendMailURL);
 
 export default function InteractiveBusinessPage() {
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -56,7 +37,7 @@ export default function InteractiveBusinessPage() {
   const [inputMessage, setInputMessage] = useState('')
   const [isVoiceCallActive, setIsVoiceCallActive] = useState(false)
   const [isEmailRequested, setIsEmailRequested] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const websocketRef = useRef<WebSocket | null>(null)
   const recorderRef = useRef<Recorder | null>(null)
@@ -103,9 +84,9 @@ export default function InteractiveBusinessPage() {
   //     }
   //   }
   // }, [])
-  // const backendMailURL = process.env.REACT_APP_BACKEND_MAIL_URL 
 
-  const sendMessageHistoryToBackend = async () => {
+
+  const sendMessageHistoryToBackend = async (messageHistory) => {
     try {
       const response = await fetch(backendMailURL, {
         method: 'POST',
@@ -168,12 +149,12 @@ export default function InteractiveBusinessPage() {
     }
   }
 
-  const handleMouseDown = (e: MouseEvent) => {
+  const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
     setIsDragging(true)
   }
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: MouseEvent) => {
     if (isDragging) {
       const newWidth = window.innerWidth - e.clientX
       setChatWidth(Math.max(300, Math.min(newWidth, window.innerWidth * 0.8)))
@@ -184,19 +165,23 @@ export default function InteractiveBusinessPage() {
     setIsDragging(false)
   }
 
-
   useEffect(() => {
+    const handleWindowMouseMove = (e: MouseEvent) => handleMouseMove(e);
+    const handleWindowMouseUp = () => handleMouseUp();
+
     if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('mousemove', handleWindowMouseMove)
+      window.addEventListener('mouseup', handleWindowMouseUp)
     }
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('mousemove', handleWindowMouseMove)
+      window.removeEventListener('mouseup', handleWindowMouseUp)
     }
   }, [isDragging])
 
-
+  const handleReactMouseMove = (e: React.MouseEvent) => {
+    handleMouseMove(e.nativeEvent);
+  };
 
   const requestMicrophoneAccess = async () => {
     try {
@@ -234,7 +219,7 @@ export default function InteractiveBusinessPage() {
             turn_detection: {
               type: 'server_vad',
               threshold: 0.4,
-              silence_duration_ms: 800,
+              silence_duration_ms: 600,
             },
           },
         })
@@ -245,6 +230,7 @@ export default function InteractiveBusinessPage() {
       websocketRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data)
         // console.log('Received from AOAI WebSocket:', data)
+        console.log('Received from AOAI WebSocket:', sessionInstructions)
         
         switch (data.type) {
           case 'response.audio_transcript.delta':
@@ -260,7 +246,7 @@ export default function InteractiveBusinessPage() {
           case 'response.audio.delta':
             if (playerRef.current) {
               const binary = atob(data.delta)
-              const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0))
+              const bytes = Uint8Array.from(binary, (c: string) => c.charCodeAt(0))
               const pcmData = new Int16Array(bytes.buffer)
               playerRef.current.play(pcmData)
             }
@@ -293,9 +279,9 @@ export default function InteractiveBusinessPage() {
       // Initialize audio recorder and player
       recorderRef.current = new Recorder((buffer: Buffer) => {
         if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN && !isAudioPaused ) {
-          const uint8Array = new Uint8Array(buffer)
-          // const base64 = btoa(String.fromCharCode.apply(null, uint8Array))
-          const base64 = btoa(String.fromCharCode(...uint8Array));
+          // const uint8Array = new Uint8Array(buffer)
+          // const base64 = btoa(String.fromCharCode.apply(null, uint8Array as any))
+          const base64 = btoa(String.fromCharCode(... new Uint8Array(buffer)))
           websocketRef.current.send(JSON.stringify({
             type: 'input_audio_buffer.append',
             audio: base64,
@@ -342,22 +328,44 @@ export default function InteractiveBusinessPage() {
     }
   }
 
+  // const handleEmailSubmit = async () => {
+  //   if (inputMessage.includes('@')) {
+  //     setMessages(prev => [...prev, { text: inputMessage, isBot: false }])
+  //     const updatedHistory = [...messageHistory,{ role: 'user', content: inputMessage}]
+  //     setMessageHistory(updatedHistory);
+  //     setInputMessage('')
+  //     setMessages(prev => [...prev, { text: "Please wait while i m processing your documentation ...", isBot: true }]);
+  //     const result = await sendMessageHistoryToBackend();
+  //     if (result.success) {
+  //       setIsEmailRequested(false)
+  //       setMessages(prev => [...prev, { text: "I have send it to your email", isBot: true }])
+  //     }
+  //   } else {
+  //     setMessages(prev => [...prev, { text: "Please enter a valid email address.", isBot: true }])
+  //   }
+  // }
   const handleEmailSubmit = async () => {
     if (inputMessage.includes('@')) {
-      setMessages(prev => [...prev, { text: inputMessage, isBot: false }])
-      const updatedHistory = [...messageHistory,{ role: 'user', content: inputMessage}]
+      const newUserMessage = { role: 'user', content: inputMessage };
+      const updatedHistory = [...messageHistory, newUserMessage];
+      const newMessages = { text: inputMessage, isBot: false };
+      const newBotMessage = { text: "Please wait while I am processing your documentation ...", isBot: true };
+  
+      setMessages(prev => [...prev, newMessages]);
       setMessageHistory(updatedHistory);
-      setInputMessage('')
-      setMessages(prev => [...prev, { text: "Please wait while i m processing your documentation ...", isBot: true }]);
-      const result = await sendMessageHistoryToBackend();
-      if (result && result.success) {
-        setIsEmailRequested(false)
-        setMessages(prev => [...prev, { text: "I have send it to your email", isBot: true }])
+      setInputMessage('');
+      setMessages(prev => [...prev, newBotMessage]);
+  
+      const result = await sendMessageHistoryToBackend(updatedHistory);
+      if (result.success) {
+        setIsEmailRequested(false);
+        setMessages(prev => [...prev, { text: "I have sent it to your email", isBot: true }]);
       }
     } else {
-      setMessages(prev => [...prev, { text: "Please enter a valid email address.", isBot: true }])
+      setMessages(prev => [...prev, { text: "Please enter a valid email address.", isBot: true }]);
     }
-  }
+  };
+
 
   const clearChat = () => {
     console.log('Clearing chat');
@@ -394,8 +402,9 @@ export default function InteractiveBusinessPage() {
         if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
           // Send stored buffer data
           audioBufferRef.current.forEach(buffer => {
-            const uint8Array = new Uint8Array(buffer)
-            const base64 = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)))
+            // const uint8Array = new Uint8Array(buffer)
+            // const base64 = btoa(String.fromCharCode.apply(null, uint8Array as any))
+            const base64 = btoa(String.fromCharCode(... new Uint8Array(buffer)))
             websocketRef.current?.send(JSON.stringify({
               type: 'input_audio_buffer.append',
               audio: base64,
@@ -433,28 +442,21 @@ export default function InteractiveBusinessPage() {
   }, [])
 
   return (
-    <div className="flex h-screen bg-gray-100" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} >
+    <div className="flex h-screen bg-gray-100" onMouseMove={handleReactMouseMove} onMouseUp={handleMouseUp} >
       <div className="flex-1 p-1 overflow-y-auto">
         <div className="mb-1">
-          {/* <img src="/placeholder.svg?height=200&width=800" alt="Business Banner" className="w-full h-50 object-cover rounded-lg shadow-md" /> */}
-          <img 
-            src="/Banner Image-Contoso.jpg" 
-            alt="Business Banner" 
-            className="w-full h-full object-contain rounded-lg shadow-md" 
-          />
+          <img src="/Banner Image-Contoso.jpg" alt="Business Banner" className="w-full h-22 object-cover rounded-lg shadow-md" />
         </div>
-
-        <div className="prose max-w-none">
-          <div>
+                <div className="prose max-w-none">
+                <div>
               <h2 className="text-3xl font-bold mb-4" style={{ color: '#4074AE' }}>Seamless Connections</h2>
-              <p className="text-lg mb-6">Every day at Changi Airport, one of the world’s busiest and best cargo hubs, Contoso is there.</p>
-              <p className="text-lg mb-6">Seamlessly connecting millions of tonnes of cargo from Singapore to the world.</p>
+              <p className="text-lg mb-6">Every day, at one of the world busiest and most advanced cargo hubs, Contoso plays a vital role in the global supply chain.</p>
+              <p className="text-lg mb-6">With our expertise and cutting edge logistics solutions, we ensure that millions of tonnes of cargo move effortlessly across continents, reaching their destinations on time and with precision.</p>
+              <p className="text-lg mb-6">By seamlessly connecting businesses to markets worldwide, we help drive trade, innovation, and growth on a global scale.</p>
             </div>
 
-        <div >
+            <div >
         <h2 className="text-2xl font-semibold mb-4">Our Services</h2>
-            <h3 className="text-xl font-semibold mb-3">WDS (Worldwide Delivery Services)</h3>
-            <p className="text-lg mb-6">WDS is now a member of the Contoso Group. WFS works closely with airlines, airports, freight forwarders and businesses, and our experienced, passionate and proactive team constantly seek the safest, most efficient way to deliver best-in-class solutions.</p>
         </div>
       </div>
 
@@ -498,7 +500,7 @@ export default function InteractiveBusinessPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-5" ref={chatContainerRef}>
-              <div className="flex flex-col w-3/5 mx-auto items-center mb-8 border border-blue-800 shadow-lg p-4 rounded-lg" style={{ boxShadow: '0 3px 5px rgba(64, 116, 174, 0.5)' }}>
+              <div className="flex flex-col w-3/5 mx-auto items-center mb-8 border border-blue-400 shadow-lg p-4 rounded-lg" style={{ boxShadow: '0 2px 4px #4074AE' }}>
                 <img 
                   src="/Cartoon_avatar_logo.png" 
                   alt="CargoMate Logo" 
@@ -571,7 +573,7 @@ export default function InteractiveBusinessPage() {
                 <Button 
                   onClick={handleVoiceCall} 
                   className="mt-4"
-                  style={{ backgroundColor: '#4074AE', color: 'white' }}
+                  style={{ backgroundColor: '#d03744', color: 'white' }}
                 >
                   End Call
                 </Button>
