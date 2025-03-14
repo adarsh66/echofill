@@ -4,9 +4,13 @@
 
 EchoFill is a demo project created to demonstrate the capability of multi-modality in Large Language Models (LLMs) as a useful tool in gathering structured information from audio conversations and filling out a form. It uses gpt4o-realtime-audio-preview model &amp; gpt-4o to interact with customer over text and voice calls and execute document automation. In this case, both models are sourced from Azure AI Foundry, though this demo will work with some minimal changes with models from OpenAI as well. 
 
-## Project Architecture
+## Solution Architecture
 
 This project is designed to facilitate a comprehensive communication system that integrates various services and databases to provide seamless user interactions. The architecture diagram outlines the flow of data and interactions between different components, including user interfaces, backend services, AI search functionalities, and external databases.
+
+![EchoFill Architecture Diagram](./echofill-architecture-diagram.png)
+
+The diagram above illustrates the flow of data and interactions between different components of the EchoFill system.
 
 ### User Interaction
 - **User**: The starting point of the interaction. Users can interact with the system through a web application or telephony system.
