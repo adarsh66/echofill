@@ -35,6 +35,7 @@ export class Recorder {
       this.mediaStreamSource.connect(this.workletNode);
       this.workletNode.connect(this.audioContext.destination);
     } catch (error) {
+      console.error("Failed to start recording", error);
       this.stop();
     }
   }

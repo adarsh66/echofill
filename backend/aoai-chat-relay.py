@@ -26,9 +26,11 @@ gpt4o_key = os.getenv("gpt-4o_api_key")
 
 email_conn_str = os.getenv("email_conn_str")
 sender_email = os.getenv("email_sender")
+print(sender_email)
+print(email_conn_str)
 email_client = EmailClient.from_connection_string(email_conn_str)
 
-SystemPrompt = "You are a customer service agent for SATS, assisting consignees in filling out the necessary forms to collect their delivery.\
+SystemPrompt = "You are a customer service agent for Contoso, assisting consignees in filling out the necessary forms to collect their delivery.\
 When user ask for help, you should provide a detailed note on the forms that need to be brought it for collection. \
 Detailed notes are essential - Provide the details in two separate messages ie if user asks is there any other info to fill in ? provide additional details .\
 Things like Identification has to be brought. Documents like Shipper LOI, Consignment Collection Form, and Identification are required - add any other data that usually being handled with consignment delivery for SME business users.\
@@ -70,7 +72,7 @@ def send_email(doc_filename, recipient_email):
         print(recipient_email)
             # Create the alternative part for plain text and HTML
         alternative_part = MIMEMultipart("alternative")
-        plain_text = "Mail from SATS Cargo Ltd"
+        plain_text = "Mail from Contoso Logistics Ltd"
         html_content = """
                     <html>
                     <body>
@@ -81,7 +83,7 @@ def send_email(doc_filename, recipient_email):
                         <li>Bring the signed document to our warehouse at the address below with supporting documents</li>
                         </ul>
                         <p><strong>Warehouse Address:</strong><br>
-                        SATS Cargo Ltd<br>
+                        Contoso Cargo Logistics Pte Ltd<br>
                         Changi Village<br>
                         Singapore, 123456
                         </p>
@@ -118,7 +120,9 @@ def send_email(doc_filename, recipient_email):
         result = poller.result()
         return result
     except Exception as ex:
+        print(ex)
         print('Exception: Message not sent')
+        
         return "Message not sent"
 
 
