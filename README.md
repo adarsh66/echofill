@@ -1,5 +1,3 @@
-# echofill
-
 # EchoFill
 
 EchoFill is a demo project created to demonstrate the capability of multi-modality in Large Language Models (LLMs) as a useful tool in gathering structured information from audio conversations and filling out a form. It uses gpt4o-realtime-audio-preview model &amp; gpt-4o to interact with customer over text and voice calls and execute document automation. In this case, both models are sourced from Azure AI Foundry, though this demo will work with some minimal changes with models from OpenAI as well. 
@@ -23,14 +21,15 @@ The diagram above illustrates the flow of data and interactions between differen
   - Processing of audio transcripts to extract structured information for form filling.
 
 ### Communication Channels
-- **Azure Communication Service**: Manages communication history and real-time streaming through WebSocket media streaming.
+- **Azure Communication Service**: Used primarily as a Email Service in this demo, though it can be used to connect with gpt-4o-audio-preview directly and do audio-in-out calls over GSM network powered by LLMs. 
 
 
 ### AI Integration
-- **AOAI gpt-40 & AOAI gpt-40 RealTime**: These AI models are used for processing real-time data and providing intelligent responses.
+- **AOAI gpt4o-realtime-preview**: Used for processing real-time audio and generating real-time responses, facilitating a natural conversation in audio format, in multiple languages.
+- **AOAI gpt4o**: Used to parse through the conversation collected from the audio interface and get structured format for filling out forms.
   
 ### External Integrations (Future, not available now)
-- **Knowledge Base Search DB**: A database used by the AI search functionality to retrieve relevant information.
+- **Azure AI Search**: Azure AI Search powers the most capable Retrieval Augmented Generation (RAG) apps, by providing ability to ingest multi modal data, have vector, text and hybrid search capability along with other AI enabled capabilities such as Semantic Reranker to boost RAG performance.
 - **External DBs/APIs/Other AI Agents**: Additional resources that can be accessed by the AI search functionality for more comprehensive results.
 - **Cosmos DB**: Stores conversation history for future reference.
 
